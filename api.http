@@ -1,0 +1,20 @@
+@server_local = https://localhost:44385
+@server_azure = https://store42.azurewebsites.net
+@server = {{server_azure}}
+
+###
+post {{server}}/signup?login=123&password=123
+
+###
+# @name login
+post {{server}}/signin?login=123&password=123
+
+###
+get {{server}}/data
+Authorization: bearer {{login.response.body.*}}
+
+###
+post {{server}}/data
+Authorization: bearer {{login.response.body.*}}
+
+{ "a": "b" }

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/a9ddc351-fd04-4b05-a73a-c462ba3b1a8d/resourceGroups/my/providers/Microsoft.Web/sites/anyread",
+    "appService.deploySubpath": "build"
+}

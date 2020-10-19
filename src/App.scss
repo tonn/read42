@@ -1,0 +1,61 @@
+$spacing: 2vw;
+
+.App {
+    $menuSize: 80vw;
+
+    width: 100vw + $menuSize;
+    height: 100vh;
+
+    position: absolute;
+    left: -$menuSize;
+    top: 0;
+    transition: left .5s;
+
+    &_ShowMenu {
+        left: 0;
+    }
+
+    &__MenuButton {
+        position: absolute;
+        left: 0;
+        top: 50px;
+    }
+
+    &__LeftSide {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: $menuSize;
+        height: 100%;
+        background: lightblue;
+        box-shadow: 1px 1px 1 black;
+
+        display: flex;
+        flex-direction: column;
+        padding: $spacing;
+    }
+
+    &__RightSide {
+        position: absolute;
+        left: $menuSize;
+        top: 0;
+        width: 100vw;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__Scroll {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    &__MenuGroup {
+      padding: $spacing;
+      border: 1px solid gray;
+
+      &:not(:last-child) {
+        margin-bottom: $spacing;
+      }
+    }
+}
