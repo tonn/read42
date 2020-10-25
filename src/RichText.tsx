@@ -6,14 +6,6 @@ import { BEM } from './Helpers';
 export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (props) => {
     const { Appearance } = props;
 
-    function onDoubleClick() {
-      // if (document.fullscreenElement) {
-      //   document.exitFullscreen();
-      // } else {
-      //   document.body.requestFullscreen();
-      // }
-    }
-
     return (<>
         <style>
             .{block()} {`{`}
@@ -25,7 +17,7 @@ export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (pr
                 padding: {Appearance.padding.map(p => `${p}vw`).join(' ')};
             {`}`}
         </style>
-        <div className={block()} onDoubleClick={onDoubleClick} dangerouslySetInnerHTML={{ __html: props.Text }}></div>
+        <div className={block()} dangerouslySetInnerHTML={{ __html: props.Text }}></div>
     </>
     );
 }

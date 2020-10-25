@@ -1,61 +1,66 @@
-$spacing: 2vw;
+@import 'shared';
 
 .App {
-    $menuSize: 80vw;
+  $menuSize: 80vw;
 
-    width: 100vw + $menuSize;
-    height: 100vh;
+  width: 100vw + $menuSize;
+  height: 100vh;
 
+  position: absolute;
+  left: -$menuSize;
+  top: 0;
+  transition: left .5s;
+
+  &_ShowMenu {
+    left: 0;
+  }
+
+  &__Buttons {
+    @include absolute-lt;
+  }
+
+  &__Button {
+    @include size($spacing * 6);
+  }
+
+  &__LeftSide {
     position: absolute;
-    left: -$menuSize;
+    left: 0;
     top: 0;
-    transition: left .5s;
+    width: $menuSize;
+    height: 100%;
+    background: lightblue;
+    box-shadow: 1px 1px 1 black;
 
-    &_ShowMenu {
-        left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: $spacing;
+  }
+
+  &__RightSide {
+    position: absolute;
+    left: $menuSize;
+    top: 0;
+    width: 100vw;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &__Scroll {
+    width: 100%;
+    height: 100%;
+    overflow: hidden auto;
+  }
+
+  &__MenuGroup {
+    padding: $spacing;
+    border: 1px solid gray;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing;
     }
-
-    &__MenuButton {
-        position: absolute;
-        left: 0;
-        top: 50px;
-    }
-
-    &__LeftSide {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: $menuSize;
-        height: 100%;
-        background: lightblue;
-        box-shadow: 1px 1px 1 black;
-
-        display: flex;
-        flex-direction: column;
-        padding: $spacing;
-    }
-
-    &__RightSide {
-        position: absolute;
-        left: $menuSize;
-        top: 0;
-        width: 100vw;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    &__Scroll {
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-    }
-
-    &__MenuGroup {
-      padding: $spacing;
-      border: 1px solid gray;
-
-      &:not(:last-child) {
-        margin-bottom: $spacing;
-      }
-    }
+  }
 }
