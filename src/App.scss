@@ -2,54 +2,45 @@
 
 .App {
   $menuSize: 80vw;
+  $buttonSize: $spacing * 6;
 
-  width: 100vw + $menuSize;
-  height: 100vh;
-
-  position: absolute;
-  left: -$menuSize;
-  top: 0;
-  transition: left .5s;
-
-  &_ShowMenu {
-    left: 0;
-  }
+  @include absolute-lt;
+  @include full-size;
 
   &__Buttons {
     @include absolute-lt;
+    @include flex;
   }
 
   &__Button {
-    @include size($spacing * 6);
+    @include size($buttonSize);
+
+    &_Update {
+      width: auto;
+    }
   }
 
-  &__LeftSide {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: $menuSize;
-    height: 100%;
+  &__Menu {
+    @include absolute-lt(- #{$menuSize}, 0);
+    @include size($menuSize, 100%);
+    overflow-x: hidden;
+    overflow-y: auto;
     background: lightblue;
-    box-shadow: 1px 1px 1 black;
-
-    display: flex;
-    flex-direction: column;
     padding: $spacing;
-  }
+    padding-top: $buttonSize + $spacing;
+    transition: left .5s, box-shadow .5s;
 
-  &__RightSide {
-    position: absolute;
-    left: $menuSize;
-    top: 0;
-    width: 100vw;
-    height: 100%;
-    overflow: hidden;
+    &_Opened {
+      left: 0;
+      box-shadow: 0vw 0vw 15vw black;
+    }
   }
 
   &__Scroll {
-    width: 100%;
-    height: 100%;
-    overflow: hidden auto;
+    @include absolute-lt;
+    @include full-size;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   &__MenuGroup {

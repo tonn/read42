@@ -1,31 +1,44 @@
 {
-  "name": "anyread",
+  "name": "read42",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
-    "@fortawesome/react-fontawesome": "^0.1.11",
+    "@fortawesome/react-fontawesome": "^0.1.12",
     "@mozilla/readability": "^0.3.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
     "@types/mozilla-readability": "^0.2.0",
-    "axios": "^0.20.0",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "axios": "^0.21.0",
     "node-sass": "^4.14.1",
-    "react": "^16.13.1",
-    "react-colorful": "^4.1.3",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3",
-    "rxjs-observe": "^2.1.5",
-    "typescript": "^4.0.3"
+    "react": "^17.0.1",
+    "react-colorful": "^4.4.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.0",
+    "rxjs": "^6.6.3",
+    "typescript": "^4.0.2",
+    "web-vitals": "^0.2.4",
+    "workbox-background-sync": "^5.1.3",
+    "workbox-broadcast-update": "^5.1.3",
+    "workbox-cacheable-response": "^5.1.3",
+    "workbox-core": "^5.1.3",
+    "workbox-expiration": "^5.1.3",
+    "workbox-google-analytics": "^5.1.3",
+    "workbox-navigation-preload": "^5.1.3",
+    "workbox-precaching": "^5.1.3",
+    "workbox-range-requests": "^5.1.3",
+    "workbox-routing": "^5.1.3",
+    "workbox-strategies": "^5.1.3",
+    "workbox-streams": "^5.1.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serveBuild": "npm run build && http-server ./build -p 3001 -S -C ./httpsCertificates/dev.crt -K ./httpsCertificates/dev.key"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,6 +56,7 @@
     ]
   },
   "devDependencies": {
+    "http-server": "^0.12.3",
     "ts-nameof.macro": "^4.2.2"
   }
 }

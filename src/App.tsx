@@ -1,4 +1,4 @@
-import { faBars, faExpand, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faArrowAltCircleUp, faBars, faExpand, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { Readability } from '@mozilla/readability';
 import Axios from 'axios';
@@ -8,11 +8,14 @@ import './App.scss';
 import { AppearanceConfig, IAppearance } from './AppearanceConfig';
 import { BEM, DebounceFn, timeout$ } from './Helpers';
 import { RichText } from './RichText';
+import { PWAUpdateAvailable } from './serviceWorkerRegistration';
 import { Store } from './Store';
 import { StoreComponent } from './Store.Component';
+import * as serviceWorker from './serviceWorkerRegistration';
 
 export const App: React.FC = () => {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ newAppVersionAvailable, setNewAppVersionAvailable ] = useState<boolean>(false);
   const [ article, setArticle ] = useState<string>();
   const [ showMenu, setShowMenu ] = useState<boolean>(false);
   const [ appearance ] = useState<IAppearance>(Store.ShareState.Appearance);
@@ -23,6 +26,14 @@ export const App: React.FC = () => {
     if (Store.LocalState.LastSource?.Raw) {
       openRawHtml(Store.LocalState.LastSource.Raw);
     }
+
+    const subscription = PWAUpdateAvailable.subscribe(() => {
+      setNewAppVersionAvailable(true);
+    })
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function openUrl(url: string) {
@@ -105,27 +116,31 @@ export const App: React.FC = () => {
     }
   }
 
+  async function forcePWAUpdate() {
+    await serviceWorker.unregister();
+    window.location.reload();
+  }
 
   return (
-    <div className={block(showMenu ? 'ShowMenu' : null)}>
-      <div className={elem('LeftSide')}>
+    <div className={block()}>
+      <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>{ article ? <RichText Text={article} Appearance={appearance} /> : null }</div>
+
+      <div className={elem('Menu', showMenu ? 'Opened' : undefined)}>
+        <div className={elem('MenuGroup')}>
+          <input ref={urlInput} defaultValue='http://www.hpmor.com/chapter/1' /><button onClick={onReadButtonClick}>Read</button>
+        </div>
         <div className={elem('MenuGroup')}>
           <StoreComponent  OnSourceClick={source => openUrl(source.Url)}/>
         </div>
         <div className={elem('MenuGroup')}>
           <AppearanceConfig Appearance={appearance} onChanged={forceUpdate}/>
         </div>
-        <div className={elem('MenuGroup')}>
-          <input ref={urlInput} defaultValue='http://www.hpmor.com/chapter/1' /><button onClick={onReadButtonClick}>Read</button>
-        </div>
       </div>
-      <div className={elem('RightSide')}>
-        <div className={elem('Buttons')}>
-          <button className={elem('Button')} onClick={() => setShowMenu(!showMenu)}><Icon icon={ showMenu ? faTimes : faBars } /></button>
-          <button className={elem('Button')} onClick={toggleFullscreen}><Icon icon={faExpand} /></button>
-        </div>
 
-        <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>{ article ? <RichText Text={article} Appearance={appearance} /> : null }</div>
+      <div className={elem('Buttons')}>
+        <button className={elem('Button')} onClick={() => setShowMenu(!showMenu)}><Icon icon={ showMenu ? faTimes : faBars } /></button>
+        <button className={elem('Button')} onClick={toggleFullscreen}><Icon icon={faExpand} /></button>
+        { newAppVersionAvailable ? <button className={elem('Button', 'Update')} onClick={forcePWAUpdate}><Icon icon={faArrowAltCircleUp} /><br/>App update</button> : null }
       </div>
     </div>
   );
