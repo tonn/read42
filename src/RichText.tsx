@@ -9,12 +9,12 @@ export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (pr
     return (<>
         <style>
             .{block()} {`{`}
-                font-family: {Appearance.fontFamily};
-                font-size: {Appearance.fontSize}vw;
-                color: {Appearance.color};
-                background: {Appearance.background};
-                line-height: {Appearance.lineHeight};
-                padding: {Appearance.padding.map(p => `${p}vw`).join(' ')};
+                font-family: {Appearance.FontFamily};
+                font-size: {Appearance.FontSize}vw;
+                color: {Appearance.Color};
+                background: {Appearance.Background};
+                line-height: {Appearance.LineHeight};
+                padding: {Appearance.Padding.map(p => `${p}vw`).join(' ')};
             {`}`}
         </style>
         <div className={block()} dangerouslySetInnerHTML={{ __html: props.Text }}></div>
