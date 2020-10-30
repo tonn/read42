@@ -1,0 +1,24 @@
+.slider-picker {
+  $size: 6vw;
+
+  > div {
+    height: $size !important;
+  }
+
+  .hue-horizontal {
+    > div > div {
+      width: $size * 1.1 !important;
+      height: $size * 1.1 !important;
+      border-radius: 50% !important;
+    }
+  }
+
+  > div:nth-of-type(2) > div {
+    height: 100% !important;
+
+    > div,
+    > div > div {
+      height: 100% !important;
+    }
+  }
+}
