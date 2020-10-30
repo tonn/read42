@@ -1,0 +1,21 @@
+@import '../shared.scss';
+
+.Indicator {
+  @include absolute-lt;
+  @include full-size;
+  @include flex-center;
+  background: #5555;
+
+  $containerSize: 20vw;
+
+  &__IconContainer {
+    @include size($containerSize);
+    @include flex-center;
+    background: #FFF8;
+    border-radius: $containerSize / 1.69;
+
+    > img {
+      @include size($containerSize / 1.69);
+    }
+  }
+}

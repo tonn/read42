@@ -6,12 +6,12 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
 import './App.scss';
 import { AppearanceConfig, IAppearance } from './AppearanceConfig';
-import { BEM, DebounceFn, timeout$ } from './Helpers';
+import { BEM, DebounceFn, GetIndicator, Indicator, timeout$ } from './Helpers';
 import { RichText } from './RichText';
+import * as serviceWorker from './serviceWorkerRegistration';
 import { PWAUpdateAvailable } from './serviceWorkerRegistration';
 import { Store } from './Store';
 import { StoreComponent } from './Store.Component';
-import * as serviceWorker from './serviceWorkerRegistration';
 
 export const App: React.FC = () => {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -37,47 +37,51 @@ export const App: React.FC = () => {
   }, []);
 
   async function openUrl(url: string) {
-    let sharedSource = Store.ShareState.Sources.find(s => s.Url === url);
+    return GetIndicator().Wrap$(async () => {
+      let sharedSource = Store.ShareState.Sources.find(s => s.Url === url);
 
-    if (!sharedSource) {
-      sharedSource = {
-        Url: url,
-        Position: 0,
-        Date: new Date()
+      if (!sharedSource) {
+        sharedSource = {
+          Url: url,
+          Position: 0,
+          Date: new Date()
+        }
+        Store.ShareState.Sources.push(sharedSource);
+      } else {
+        sharedSource.Date = new Date();
       }
-      Store.ShareState.Sources.push(sharedSource);
-    } else {
-      sharedSource.Date = new Date();
-    }
 
-    if (Store.LocalState.LastSource?.Url === url) {
-      Store.LocalState.LastSource.Position = sharedSource.Position;
-      Store.LocalState.LastSource.Date = sharedSource.Date;
-    } else {
-      const throughCORSUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+      if (Store.LocalState.LastSource?.Url === url) {
+        Store.LocalState.LastSource.Position = sharedSource.Position;
+        Store.LocalState.LastSource.Date = sharedSource.Date;
+      } else {
+        const throughCORSUrl = `https://cors-anywhere.herokuapp.com/${url}`;
 
-      const html = (await Axios.get(throughCORSUrl)).data as string;
+        const html = (await Axios.get(throughCORSUrl)).data as string;
 
-      Store.LocalState.LastSource = { ...sharedSource, Raw: html };
-    }
+        Store.LocalState.LastSource = { ...sharedSource, Raw: html };
+      }
 
-    Store.SaveLocalState();
+      Store.SaveLocalState();
 
-    openRawHtml(Store.LocalState.LastSource.Raw);
+      openRawHtml(Store.LocalState.LastSource.Raw);
+    });
   }
 
-  function openRawHtml(html: string) {
-    const articleDiv = document.implementation.createHTMLDocument('innerArticleDocument');
-    articleDiv.body.innerHTML = html;
+  async function openRawHtml(html: string) {
+    return GetIndicator().Wrap$(async () => {
+      const articleDiv = document.implementation.createHTMLDocument('innerArticleDocument');
+      articleDiv.body.innerHTML = html;
 
-    const reader = new Readability(articleDiv as unknown as Document);
-    const article = reader.parse();
+      const reader = new Readability(articleDiv as unknown as Document);
+      const article = reader.parse();
 
-    const textHtml = (article?.content || '');
+      const textHtml = (article?.content || '');
 
-    setArticle(textHtml);
+      setArticle(textHtml);
 
-    timeout$().then(() => {
+      await timeout$();
+
       if (scrollElement.current && Store.LocalState.LastSource) {
         scrollElement.current.scrollTop = scrollElement.current.scrollHeight * Store.LocalState.LastSource.Position;
       }
@@ -121,7 +125,7 @@ export const App: React.FC = () => {
     window.location.reload();
   }
 
-  return (
+  return (<>
     <div className={block()}>
       <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>{ article ? <RichText Text={article} Appearance={appearance} /> : null }</div>
 
@@ -143,7 +147,9 @@ export const App: React.FC = () => {
         { newAppVersionAvailable ? <button className={elem('Button', 'Update')} onClick={forcePWAUpdate}><Icon icon={faArrowAltCircleUp} /><br/>App update</button> : null }
       </div>
     </div>
-  );
+
+    <Indicator Main={true} />
+  </>);
 }
 
 const { block, elem } = BEM(nameof(App));
