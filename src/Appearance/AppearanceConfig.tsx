@@ -1,24 +1,7 @@
 import React, { useReducer } from 'react';
 import { SliderPicker } from 'react-color';
+import { IAppearance } from '.';
 import './AppearanceConfig.scss';
-
-export const DefaultAppearance: IAppearance = {
-  Color: '#222',
-  Background: '#CCA',
-  FontFamily: 'arial',
-  FontSize: 5,
-  LineHeight: 1.5,
-  Padding: [ 5, 5, 5, 5 ],
-};
-
-export interface IAppearance {
-  FontSize: number;
-  FontFamily: string;
-  LineHeight: number;
-  Background: string;
-  Padding: number[];
-  Color: string;
-}
 
 export const AppearanceConfig: React.FC<{ Appearance: IAppearance, onChanged: () => void }> = ({ Appearance, onChanged }) => {
   const [, forceUpdate] = useReducer((x: number) => x + 1, 0);

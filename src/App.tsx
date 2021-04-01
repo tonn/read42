@@ -5,7 +5,7 @@ import Axios from 'axios';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
 import './App.scss';
-import { AppearanceConfig, IAppearance } from './AppearanceConfig';
+import { AppearanceConfig, DefaultAppearance, IAppearance } from './Appearance';
 import { BEM, DebounceFn, GetIndicator, Indicator, timeout$ } from './Helpers';
 import { RichText } from './RichText';
 import * as serviceWorker from './serviceWorkerRegistration';
@@ -18,7 +18,7 @@ export const App: React.FC = () => {
   const [ newAppVersionAvailable, setNewAppVersionAvailable ] = useState<boolean>(false);
   const [ article, setArticle ] = useState<string>();
   const [ showMenu, setShowMenu ] = useState<boolean>(false);
-  const [ appearance ] = useState<IAppearance>(Store.ShareState.Appearance);
+  const [ appearance ] = useState<IAppearance>(DefaultAppearance);
   const urlInput = useRef<HTMLInputElement>(null);
   const scrollElement = useRef<HTMLDivElement>(null);
 
