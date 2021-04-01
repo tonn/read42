@@ -23,8 +23,10 @@ export const App: React.FC = () => {
   const scrollElement = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (Store.LocalState.LastSource?.Raw) {
-      openRawHtml(Store.LocalState.LastSource.Raw);
+    const { LastSource: lastSource } = Store.Get();
+
+    if (lastSource?.Raw) {
+      openRawHtml(lastSource.Raw);
     }
 
     const subscription = PWAUpdateAvailable.subscribe(() => {
@@ -38,7 +40,9 @@ export const App: React.FC = () => {
 
   async function openUrl(url: string) {
     return GetIndicator().Wrap$(async () => {
-      let sharedSource = Store.ShareState.Sources.find(s => s.Url === url);
+      let { SharedState: shared, LastSource: lastSource } = Store.Get();
+
+      let sharedSource = shared.Sources.find(s => s.Url === url);
 
       if (!sharedSource) {
         sharedSource = {
@@ -46,25 +50,26 @@ export const App: React.FC = () => {
           Position: 0,
           Date: new Date()
         }
-        Store.ShareState.Sources.push(sharedSource);
+
+        shared.Sources.push(sharedSource);
       } else {
         sharedSource.Date = new Date();
       }
 
-      if (Store.LocalState.LastSource?.Url === url) {
-        Store.LocalState.LastSource.Position = sharedSource.Position;
-        Store.LocalState.LastSource.Date = sharedSource.Date;
+      if (lastSource?.Url === url) {
+        lastSource.Position = sharedSource.Position;
+        lastSource.Date = sharedSource.Date;
       } else {
         const throughCORSUrl = `https://cors-anywhere.herokuapp.com/${url}`;
 
         const html = (await Axios.get(throughCORSUrl)).data as string;
 
-        Store.LocalState.LastSource = { ...sharedSource, Raw: html };
+        lastSource = { ...sharedSource, Raw: html };
       }
 
-      Store.SaveLocalState();
+      Store.Set({ SharedState: shared, LastSource: lastSource });
 
-      openRawHtml(Store.LocalState.LastSource.Raw);
+      openRawHtml(lastSource.Raw);
     });
   }
 
@@ -82,8 +87,10 @@ export const App: React.FC = () => {
 
       await timeout$();
 
-      if (scrollElement.current && Store.LocalState.LastSource) {
-        scrollElement.current.scrollTop = scrollElement.current.scrollHeight * Store.LocalState.LastSource.Position;
+      const lastSource = Store.Get().LastSource;
+
+      if (scrollElement.current && lastSource) {
+        scrollElement.current.scrollTop = scrollElement.current.scrollHeight * lastSource.Position;
       }
     });
   }
@@ -97,18 +104,21 @@ export const App: React.FC = () => {
   }
 
   const onTextScroll = useRef(DebounceFn(() => {
-    if (Store.LocalState.LastSource) {
-      const source = Store.LocalState.LastSource;
+    const { LastSource: source, SharedState: shared } = Store.Get();
 
+    if (source) {
       source.Position = scrollElement.current!.scrollTop / scrollElement.current!.scrollHeight;
       source.Date = new Date();
-      Store.SaveLocalState();
 
-      const sharedSource = Store.ShareState.Sources.find(s => s.Url === source.Url);
+
+      const sharedSource = shared.Sources.find(s => s.Url === source.Url);
+
       if (sharedSource) {
         sharedSource.Position = source.Position;
         sharedSource.Date = source.Date;
       }
+
+      Store.Set({ LastSource: source, SharedState: shared });
     }
   }, 1000));
 
