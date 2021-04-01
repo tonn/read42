@@ -12,6 +12,8 @@
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "axios": "^0.21.0",
+    "deep-equal": "^2.0.4",
+    "lodash": "^4.17.21",
     "node-sass": "^4.14.1",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
@@ -19,6 +21,7 @@
     "react-scripts": "4.0.0",
     "rxjs": "^6.6.3",
     "typescript": "^4.0.2",
+    "uuid": "^8.3.1",
     "web-vitals": "^0.2.4",
     "workbox-background-sync": "^5.1.3",
     "workbox-broadcast-update": "^5.1.3",
@@ -35,10 +38,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:https": "npm run build && http-server ./build -p 3001 -S -C ./httpsCertificates/dev.crt -K ./httpsCertificates/dev.key",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serveBuild": "npm run build && http-server ./build -p 3001 -S -C ./httpsCertificates/dev.crt -K ./httpsCertificates/dev.key"
+    "deploy:firebase": "npm build && firebase deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -56,6 +60,8 @@
     ]
   },
   "devDependencies": {
+    "@types/deep-equal": "^1.0.1",
+    "@types/lodash": "^4.14.168",
     "@types/react-color": "^3.0.4",
     "http-server": "^0.12.3",
     "ts-nameof.macro": "^4.2.2"

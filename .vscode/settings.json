@@ -1,4 +1,9 @@
 {
-    "appService.defaultWebAppToDeploy": "/subscriptions/a9ddc351-fd04-4b05-a73a-c462ba3b1a8d/resourceGroups/my/providers/Microsoft.Web/sites/anyread",
-    "appService.deploySubpath": "build"
+    "appService.deploySubpath": "build",
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "None"
 }
