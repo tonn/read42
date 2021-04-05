@@ -1,4 +1,4 @@
-import { faArrowAltCircleUp, faBars, faExpand, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faArrowAltCircleUp, faBars, faExpand, faTimes, faCogs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { Readability } from '@mozilla/readability';
 import Axios from 'axios';
@@ -6,21 +6,27 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
 import './App.scss';
 import { AppearanceConfig, DefaultAppearance, IAppearance } from './Appearance';
+import { AppLayout, AppLayoutRef, ToolBarButton } from './AppLayout';
+import { DictionaryPage } from './DictionaryPage';
 import { BEM, DebounceFn, GetIndicator, Indicator, timeout$ } from './Helpers';
 import { RichText } from './RichText';
 import * as serviceWorker from './serviceWorkerRegistration';
 import { PWAUpdateAvailable } from './serviceWorkerRegistration';
-import { Store } from './Store';
+import { Server, Store } from './Store';
 import { StoreComponent } from './Store.Component';
+
+type PageType = 'read' | 'dict';
 
 export const App: React.FC = () => {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [ newAppVersionAvailable, setNewAppVersionAvailable ] = useState<boolean>(false);
   const [ article, setArticle ] = useState<string>();
-  const [ showMenu, setShowMenu ] = useState<boolean>(false);
   const [ appearance ] = useState<IAppearance>(DefaultAppearance);
+  const [ appPage, setAppPage ] = useState<PageType>('read');
+  const [ sidePanelContent, setSidePanelContent ] = useState<{ render: () => React.ReactNode }>();
   const urlInput = useRef<HTMLInputElement>(null);
   const scrollElement = useRef<HTMLDivElement>(null);
+  const appLayout = useRef<AppLayoutRef>(null);
 
   useEffect(() => {
     const { LastSource: lastSource } = Store.Get();
@@ -60,9 +66,7 @@ export const App: React.FC = () => {
         lastSource.Position = sharedSource.Position;
         lastSource.Date = sharedSource.Date;
       } else {
-        const throughCORSUrl = `https://cors-anywhere.herokuapp.com/${url}`;
-
-        const html = (await Axios.get(throughCORSUrl)).data as string;
+        const html = (await Store.CORSProxy(url)).data as string;
 
         lastSource = { ...sharedSource, Raw: html };
       }
@@ -135,27 +139,61 @@ export const App: React.FC = () => {
     window.location.reload();
   }
 
+  function openPage(pageName: PageType) {
+    setAppPage(pageName);
+    appLayout.current?.hideSidePanel();
+  }
+
+  function getToolbarButtons() {
+    const result: ToolBarButton[] = [{
+      Icon: faBars,
+      OpenSidePanel: true,
+      OnClick: () => {
+        const renderer = { render: () => <>
+          <div className={elem('MenuNavigationItem', appPage === 'read' ? 'Active' : undefined)} onClick={() => openPage('read')}>Reading</div>
+          <div className={elem('MenuNavigationItem', appPage === 'dict' ? 'Active' : undefined)} onClick={() => openPage('dict')}>Dictionary</div>
+
+          <div className={elem('MenuGroup')}>
+            <input ref={urlInput} defaultValue='http://www.hpmor.com/chapter/1' /><button onClick={onReadButtonClick}>Read</button>
+          </div>
+        </> };
+
+        setSidePanelContent(renderer);
+      }
+    }, {
+      Icon: faCogs,
+      OpenSidePanel: true,
+      OnClick: () => setSidePanelContent({ render: () => <>
+        <div className={elem('MenuGroup')}>
+          <StoreComponent OnSourceClick={source => openUrl(source.Url)} />
+        </div>
+        <div className={elem('MenuGroup')}>
+          <AppearanceConfig Appearance={appearance} onChanged={forceUpdate} />
+        </div>
+      </>})
+    }, {
+      Icon: faExpand,
+      OnClick: toggleFullscreen
+    }];
+
+    if (newAppVersionAvailable) {
+      result.push({
+        Icon: faArrowAltCircleUp,
+        OnClick: forcePWAUpdate
+      });
+    }
+
+    return result;
+  }
+
   return (<>
     <div className={block()}>
-      <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>{ article ? <RichText Text={article} Appearance={appearance} /> : null }</div>
-
-      <div className={elem('Menu', showMenu ? 'Opened' : undefined)}>
-        <div className={elem('MenuGroup')}>
-          <input ref={urlInput} defaultValue='http://www.hpmor.com/chapter/1' /><button onClick={onReadButtonClick}>Read</button>
+      <AppLayout ToolBarButtons={getToolbarButtons()} SidePanelChildren={sidePanelContent?.render()} ref={appLayout}>
+        <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>
+          { (appPage === 'read' && article) ? <RichText Text={article} Appearance={appearance} /> :
+            appPage === 'dict' ? <DictionaryPage /> : null }
         </div>
-        <div className={elem('MenuGroup')}>
-          <StoreComponent  OnSourceClick={source => openUrl(source.Url)}/>
-        </div>
-        <div className={elem('MenuGroup')}>
-          <AppearanceConfig Appearance={appearance} onChanged={forceUpdate}/>
-        </div>
-      </div>
-
-      <div className={elem('Buttons')}>
-        <button className={elem('Button')} onClick={() => setShowMenu(!showMenu)}><Icon icon={ showMenu ? faTimes : faBars } /></button>
-        <button className={elem('Button')} onClick={toggleFullscreen}><Icon icon={faExpand} /></button>
-        { newAppVersionAvailable ? <button className={elem('Button', 'Update')} onClick={forcePWAUpdate}><Icon icon={faArrowAltCircleUp} /><br/>App update</button> : null }
-      </div>
+      </AppLayout>
     </div>
 
     <Indicator Main={true} />

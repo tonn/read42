@@ -2,7 +2,7 @@ import Axios, { AxiosError, AxiosResponse } from 'axios';
 import { DefaultLocalState, DefaultSharedState, IAppLocalState, IAppSharedState } from './State';
 import _ from 'lodash';
 
-const Server = 'https://store42.azurewebsites.net';
+export const Server = 'https://store42.azurewebsites.net';
 const LS_LOCAL_STATE = 'LS_LOCAL_STATE';
 
 interface RemoteStoreResponse {
@@ -63,6 +63,12 @@ class _Store {
     this._localState.Login = login;
 
     this.saveLocalState();
+  }
+
+  async CORSProxy(url: string) {
+    const throughCORSUrl = `${Server}/proxy?url=${encodeURIComponent(url)}`;
+
+    return await Axios.get(throughCORSUrl, { headers: this._authHeaders });
   }
 
   Logout() {

@@ -7,35 +7,6 @@
   @include absolute-lt;
   @include full-size;
 
-  &__Buttons {
-    @include absolute-lt;
-    @include flex;
-  }
-
-  &__Button {
-    @include size($buttonSize);
-
-    &_Update {
-      width: auto;
-    }
-  }
-
-  &__Menu {
-    @include absolute-lt(- #{$menuSize}, 0);
-    @include size($menuSize, 100%);
-    overflow-x: hidden;
-    overflow-y: auto;
-    background: lightblue;
-    padding: $spacing;
-    padding-top: $buttonSize + $spacing;
-    transition: left .5s, box-shadow .5s;
-
-    &_Opened {
-      left: 0;
-      box-shadow: 0vw 0vw 15vw black;
-    }
-  }
-
   &__Scroll {
     @include absolute-lt;
     @include full-size;
@@ -44,14 +15,27 @@
   }
 
   &__MenuGroup {
+    margin: $spacing 0;
     padding: $spacing;
     border: 1px solid gray;
     overflow: hidden;
     white-space: normal;
     word-break: break-all;
+  }
 
-    &:not(:last-child) {
-      margin-bottom: $spacing;
+  &__MenuNavigationItem {
+    $height: 10vw;
+
+    @include size(100%, $height);
+    @include flex-vertical-center;
+    text-transform: uppercase;
+    font-size: $height * .5;
+    padding: $spacing;
+    border-bottom: 1px sold #FFF;
+    background-color: #EEE;
+
+    &_Active {
+      background-color: #BBB;
     }
   }
 }

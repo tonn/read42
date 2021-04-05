@@ -18,3 +18,7 @@ post {{server}}/data
 Authorization: bearer {{login.response.body.*}}
 
 { "a": "b" }
+
+###
+get {{server}}/proxy?url=http://www.hpmor.com/chapter/1
+Authorization: bearer {{login.response.body.*}}

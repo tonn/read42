@@ -1,0 +1,53 @@
+@import 'shared';
+
+.AppLayout {
+  @include size(100%);
+  $toolbarSize: 10vw;
+  $sidePanelSize: 80vw;
+
+  $heightNoToolbar: calc(100% - #{$toolbarSize});
+
+  &__SidePanel {
+    @include absolute-lt(- #{$sidePanelSize}, 0);
+    @include size(100%);
+    z-index: 1;
+    transition: left .5s;
+
+    pointer-events: none;
+
+    &_Visible {
+      left: 0;
+      pointer-events: all;
+    }
+  }
+
+  &__SidePanelContent {
+    @include absolute-lt;
+    @include size($sidePanelSize, 100%);
+    background: white;
+    overflow: hidden auto;
+    padding: $spacing;
+    transition: box-shadow .5s;
+
+    &_Visible {
+      box-shadow: 0vw 0vw 15vw black;
+    }
+  }
+
+  &__Toolbar {
+    @include absolute-lb;
+    @include size(100%, 10vw);
+    @include flex-vertical-center;
+    background-color: gray;
+  }
+
+  &__Button {
+    @include size($toolbarSize);
+    @include flex-center;
+  }
+
+  &__Content {
+    @include absolute-lt;
+    @include size(100%, $heightNoToolbar);
+  }
+}

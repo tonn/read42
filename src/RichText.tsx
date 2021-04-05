@@ -18,8 +18,7 @@ export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (pr
             {`}`}
         </style>
         <div className={block()} dangerouslySetInnerHTML={{ __html: props.Text }}></div>
-    </>
-    );
+    </>);
 }
 
 const { block, /*elem*/ } = BEM(nameof(RichText));
