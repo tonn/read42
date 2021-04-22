@@ -1,0 +1,10 @@
+.DictionaryPage {
+  &__RecordRemove {
+    color: lightgray;
+    cursor: pointer;
+
+    &:hover {
+      color: black;
+    }
+  }
+}

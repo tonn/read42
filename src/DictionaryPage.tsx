@@ -1,28 +1,120 @@
-import React, { useRef } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
-import { BEM } from './Helpers';
+import { BEM, Nbsp } from './Helpers';
 import { Store } from './Store';
+import { faTrash, faCheck, faPlus, faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as FAIcon } from '@fortawesome/react-fontawesome';
+import './DictionaryPage.scss';
+import _ from 'lodash';
+import { IDictionaryRecord } from './State';
+
+interface IDictionaryRecordViewModel {
+  Record: IDictionaryRecord;
+  IsSeleted: boolean;
+}
+
+function PrepareDictionaryRecordViewModels(dict: IDictionaryRecord[]): IDictionaryRecordViewModel[] {
+  return dict.map(r => ({ Record: r, IsSeleted: false }));
+}
 
 export const DictionaryPage: React.FC<{}> = (props) => {
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [dict, setDict] = useState(PrepareDictionaryRecordViewModels(Store.Get().SharedState.Dictionary));
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const dict = Store.Get().SharedState.Dictionary;
-
-  function onKeyPress(e: React.KeyboardEvent) {
-    if (e.key === '13' && inputRef.current) {
-      inputRef.current.value.split('\n').forEach(word => {
-        dict.push({
-          BaseWord: word
-        });
-      });
+  function onInputKeyPress(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' && e.shiftKey && inputRef.current) {
+      addRecords();
+      inputRef.current.value = '';
+      inputRef.current.focus();
+      // inputRef.current.setSelectionRange(0, 0);
+      // inputRef.current.selectionStart = 0;
+      // inputRef.current.selectionEnd = 0;
     }
   }
 
-  return (<div className={block()}>
-    <textarea ref={inputRef} onKeyPress={onKeyPress} />
+  function onAddRecordsButtonPress() {
+    if (inputRef.current) {
+      addRecords();
+      inputRef.current.value = '';
+      inputRef.current.focus();
+    }
+  }
 
-    { dict.map(record => <div>{record.BaseWord}</div>) }
+  function addRecords() {
+    const lines = inputRef.current?.value.split('\n');
+
+    if (lines) {
+      const sharedState = Store.Get().SharedState;
+
+      const newDict = [...sharedState.Dictionary]
+
+      lines.forEach(line => {
+        if (!_.isEmpty(line) &&
+            !newDict.some(r => r.BaseWord === line)) {
+          const [record, transcription, ...translations] = line.split(';').map(_.trim);
+
+          newDict.push({
+            BaseWord: record,
+            Transcription: transcription,
+            Translations: translations
+          });
+        }
+
+        return !_.isEmpty(line) &&
+              !sharedState.Dictionary.some(r => r.BaseWord === line);
+      });
+
+      Store.Set({ SharedState: { ...sharedState, ...{ Dictionary: newDict } } });
+
+      setDict(PrepareDictionaryRecordViewModels(Store.Get().SharedState.Dictionary));
+    }
+  }
+
+  function removeSelected() {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm(`Remove selected items?`)) {
+      const sharedState = Store.Get().SharedState;
+      const newDict = dict.filter(rvm => !rvm.IsSeleted).map(rvm => rvm.Record);
+
+      Store.Set({ SharedState: { ...sharedState, ...{ Dictionary: newDict } } });
+
+      setDict(PrepareDictionaryRecordViewModels(Store.Get().SharedState.Dictionary));
+    }
+  }
+
+  function toggleRecordSelection(recordvm: IDictionaryRecordViewModel) {
+    recordvm.IsSeleted = !recordvm.IsSeleted;
+    forceUpdate();
+  }
+
+  function toggleSelectionAll() {
+    if (dict.some(rvm => rvm.IsSeleted)) {
+      dict.forEach(rvm => rvm.IsSeleted = false);
+    } else {
+      dict.forEach(rvm => rvm.IsSeleted = true);
+    }
+
+    forceUpdate();
+  }
+
+  return (<div className={block()}>
+    <div>
+      <textarea ref={inputRef} onKeyPress={onInputKeyPress} />
+    </div>
+    <div>
+      <button onClick={onAddRecordsButtonPress}><FAIcon icon={faPlus}/> Add records</button>
+      <button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</button>
+      <button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</button>
+    </div>
+    <div>
+      { dict.map((recordvm, index) =>
+        <div key={recordvm.Record.BaseWord}>
+          <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
+          {index+1}.<Nbsp />{recordvm.Record.BaseWord}
+        </div>) }
+    </div>
   </div>);
 }
 
-const { block, /*elem*/ } = BEM(nameof(DictionaryPage));
+const { block, elem } = BEM(nameof(DictionaryPage));

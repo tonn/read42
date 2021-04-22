@@ -14,6 +14,8 @@ export interface ILocalSource extends ISource {
 
 export interface IDictionaryRecord {
   BaseWord: string,
+  Transcription?: string,
+  Translations?: string[],
   Forms?: string[],
   Synonyms?: string[],
   Antonyms?: string[],

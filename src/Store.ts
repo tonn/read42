@@ -2,7 +2,9 @@ import Axios, { AxiosError, AxiosResponse } from 'axios';
 import { DefaultLocalState, DefaultSharedState, IAppLocalState, IAppSharedState } from './State';
 import _ from 'lodash';
 
+const DebugToken = '8D746162-59F6-4D50-B85D-D132B64C831B';
 export const Server = 'https://store42.azurewebsites.net';
+//export const Server = 'https://localhost:44385';
 const LS_LOCAL_STATE = 'LS_LOCAL_STATE';
 
 interface RemoteStoreResponse {
@@ -19,7 +21,7 @@ class _Store {
       throw Error('Auth Token is undefined');
     }
 
-    return { Authorization: `Bearer ${this._localState.Token}` };
+    return { Authorization: `Bearer ${this._localState.Token}`, DebugToken };
   }
 
   constructor() {
