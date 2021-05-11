@@ -121,6 +121,16 @@ $spacing: 2vw;
   }
 }
 
+@mixin clickable($hiddenOpacity: .5) {
+  cursor: pointer;
+  opacity: $hiddenOpacity;
+  transition: opacity .5s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 @mixin fieldTitleFont {
   font-family: Roboto;
   font-size: 11px;

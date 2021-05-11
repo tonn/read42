@@ -1,10 +1,31 @@
+@import 'shared';
+
 .DictionaryPage {
-  &__RecordRemove {
-    color: lightgray;
+  @include full-size;
+  @include flex(column);
+  overflow: hidden;
+
+  > * {
+    flex: 0 0 auto;
+  }
+
+  &__Records {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+
+  &__Record {
+    width: 100%;
+    padding: $spacing / 2;
+
+    > *:not(:last-child) {
+      margin-right: $spacing / 2;
+    }
+
     cursor: pointer;
 
     &:hover {
-      color: black;
+      background-color: lightgray;
     }
   }
 }

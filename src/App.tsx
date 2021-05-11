@@ -1,7 +1,5 @@
-import { faArrowAltCircleUp, faBars, faExpand, faTimes, faCogs } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faArrowAltCircleUp, faBars, faCogs, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { Readability } from '@mozilla/readability';
-import Axios from 'axios';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
 import './App.scss';
@@ -12,7 +10,7 @@ import { BEM, DebounceFn, GetIndicator, Indicator, timeout$ } from './Helpers';
 import { RichText } from './RichText';
 import * as serviceWorker from './serviceWorkerRegistration';
 import { PWAUpdateAvailable } from './serviceWorkerRegistration';
-import { Server, Store } from './Store';
+import { Store } from './Store';
 import { StoreComponent } from './Store.Component';
 
 type PageType = 'read' | 'dict';
@@ -22,7 +20,7 @@ export const App: React.FC = () => {
   const [ newAppVersionAvailable, setNewAppVersionAvailable ] = useState<boolean>(false);
   const [ article, setArticle ] = useState<string>();
   const [ appearance ] = useState<IAppearance>(DefaultAppearance);
-  const [ appPage, setAppPage ] = useState<PageType>('read');
+  const [ appPage, setAppPage ] = useState<PageType>('dict');
   const [ sidePanelContent, setSidePanelContent ] = useState<{ render: () => React.ReactNode }>();
   const urlInput = useRef<HTMLInputElement>(null);
   const scrollElement = useRef<HTMLDivElement>(null);

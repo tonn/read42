@@ -1,12 +1,14 @@
 import React, { useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
-import { BEM, Nbsp } from './Helpers';
+import { BEM, JsonEditor, Nbsp } from './Helpers';
 import { Store } from './Store';
-import { faTrash, faCheck, faPlus, faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAIcon } from '@fortawesome/react-fontawesome';
 import './DictionaryPage.scss';
 import _ from 'lodash';
 import { IDictionaryRecord } from './State';
+import { Modal } from './Helpers/Modal';
+import { DictionaryRecordModal } from './DictionaryRecord';
 
 interface IDictionaryRecordViewModel {
   Record: IDictionaryRecord;
@@ -21,6 +23,7 @@ export const DictionaryPage: React.FC<{}> = (props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [dict, setDict] = useState(PrepareDictionaryRecordViewModels(Store.Get().SharedState.Dictionary));
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const recordEditModalRef = useRef<DictionaryRecordModal>(null);
 
   function onInputKeyPress(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && e.shiftKey && inputRef.current) {
@@ -62,7 +65,7 @@ export const DictionaryPage: React.FC<{}> = (props) => {
         }
 
         return !_.isEmpty(line) &&
-              !sharedState.Dictionary.some(r => r.BaseWord === line);
+               !sharedState.Dictionary.some(r => r.BaseWord === line);
       });
 
       Store.Set({ SharedState: { ...sharedState, ...{ Dictionary: newDict } } });
@@ -98,23 +101,27 @@ export const DictionaryPage: React.FC<{}> = (props) => {
     forceUpdate();
   }
 
-  return (<div className={block()}>
-    <div>
-      <textarea ref={inputRef} onKeyPress={onInputKeyPress} />
+  return (
+    <div className={block()}>
+      <textarea ref={inputRef} className={elem('Input')} onKeyPress={onInputKeyPress} />
+      <div>
+        <button onClick={onAddRecordsButtonPress}><FAIcon icon={faPlus}/> Add records</button>
+        <button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</button>
+        <button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</button>
+      </div>
+      <div className={elem('Records')}>
+        { dict.map((recordvm, index) =>
+          <div key={recordvm.Record.BaseWord} className={elem('Record')} onClick={() => recordEditModalRef.current?.Show$(recordvm.Record)}>
+            <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
+            <span>
+              {index+1}.<Nbsp />{recordvm.Record.BaseWord}
+            </span>
+          </div>) }
+      </div>
+
+      <DictionaryRecordModal ref={recordEditModalRef} />
     </div>
-    <div>
-      <button onClick={onAddRecordsButtonPress}><FAIcon icon={faPlus}/> Add records</button>
-      <button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</button>
-      <button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</button>
-    </div>
-    <div>
-      { dict.map((recordvm, index) =>
-        <div key={recordvm.Record.BaseWord}>
-          <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
-          {index+1}.<Nbsp />{recordvm.Record.BaseWord}
-        </div>) }
-    </div>
-  </div>);
+  );
 }
 
 const { block, elem } = BEM(nameof(DictionaryPage));
