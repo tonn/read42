@@ -1,13 +1,13 @@
 import React from 'react';
-import JSONEditor from 'jsoneditor';
+import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 
-export class JsonEditor extends React.Component<{ json: unknown }, {}, any> {
+export class JsonEditor extends React.Component<{ json: unknown, className?: string, options?: JSONEditorOptions }, {}, any> {
   private _containerRef = React.createRef<HTMLDivElement>();
   private _jsonEditor: JSONEditor | undefined;
 
   componentDidMount() {
     if (this._containerRef.current) {
-      this._jsonEditor = new JSONEditor(this._containerRef.current, { });
+      this._jsonEditor = new JSONEditor(this._containerRef.current, { ...this.props.options });
       this._jsonEditor.set(this.props.json);
     }
   }
@@ -22,6 +22,6 @@ export class JsonEditor extends React.Component<{ json: unknown }, {}, any> {
   }
 
   render() {
-    return <div ref={this._containerRef} />
+    return <div className={this.props.className} ref={this._containerRef} />
   }
 }

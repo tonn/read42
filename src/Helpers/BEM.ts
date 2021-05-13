@@ -1,14 +1,21 @@
-import { isNullOrUndefined } from 'util';
+import { IsEmptyOrWhitespaces } from "./String.extension";
 
 export function BEM(blockName: string) {
-  return { 
+  return {
     block: function (...mods: (string | null | undefined)[]) {
       return [blockName, ...mods.filter(mod => !!mod).map(mod => `${blockName}_${mod}`)].join(' ');
     },
-    elem: function (elemName: string, ...mods: (string | undefined)[]) {
+    elem: function (elemName: string, ...mods: (string | undefined | false)[]) {
       const baseClass = `${blockName}__${elemName}`;
-    
-      return [baseClass, ...mods.filter(mod => !isNullOrUndefined(mod)).map(mod => `${baseClass}_${mod}`)].join(' ');
+
+      const nonEmptyMods = mods.filter((mod): mod is string => mod !== false && !IsEmptyOrWhitespaces(mod));
+
+      return [baseClass, ...nonEmptyMods.map(mod => `${baseClass}_${mod}`)].join(' ');
     }
   }
+}
+
+
+export function cn(...classes: (string | false | undefined | null)[]): string {
+  return classes.filter(c => !!c).join(' ');
 }

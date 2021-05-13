@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { IDictionaryRecord } from './State';
 import { Modal } from './Helpers/Modal';
 import { DictionaryRecordModal } from './DictionaryRecord';
+import { Tabs } from './Helpers/Tabs';
+import { Map } from './Helpers/Map';
 
 interface IDictionaryRecordViewModel {
   Record: IDictionaryRecord;
@@ -109,15 +111,38 @@ export const DictionaryPage: React.FC<{}> = (props) => {
         <button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</button>
         <button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</button>
       </div>
-      <div className={elem('Records')}>
-        { dict.map((recordvm, index) =>
-          <div key={recordvm.Record.BaseWord} className={elem('Record')} onClick={() => recordEditModalRef.current?.Show$(recordvm.Record)}>
-            <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
-            <span>
-              {index+1}.<Nbsp />{recordvm.Record.BaseWord}
-            </span>
-          </div>) }
-      </div>
+      <Tabs className={elem('Tabs')} Tabs={[{
+        Title: 'List',
+        Render: () =>
+          <div className={elem('Records')}>
+            <Map items={dict} render={(recordvm, index) =>
+              <div key={recordvm.Record.BaseWord} className={elem('Record')} onClick={() => recordEditModalRef.current?.Show$(recordvm.Record)}>
+                <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
+                <span>
+                  {index+1}.<Nbsp />{recordvm.Record.BaseWord}
+                </span>
+              </div>
+            } />
+          </div>
+      }, {
+        Title: 'Json',
+        Render: () =>
+          <JsonEditor className={elem('Records')} json={dict.map(d => d.Record)} options={{
+            mode: 'tree',
+            schema: {
+              elements: {
+                properties: {
+                  BaseWord: { type: 'string' },
+                  Transcription: { type: 'string'},
+                  Translations: { elements: { type: 'string' } }
+                }
+              }
+            }
+          }} />
+      }, {
+        Title: 'Text',
+        Render: () => <textarea />
+      }]}/>
 
       <DictionaryRecordModal ref={recordEditModalRef} />
     </div>
