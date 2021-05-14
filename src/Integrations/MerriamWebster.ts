@@ -26,7 +26,7 @@ function normalizeWord(word: string): string {
   return result ? result[2] : word;
 }
 
-class _DictionaryapiDotCom {
+class _MerriamWebster {
   async GetWordInfo(word: string) {
     word = normalizeWord(word);
 
@@ -34,16 +34,15 @@ class _DictionaryapiDotCom {
       url: `https://www.dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${ApiKeys.Intermediate}`
     }) as AxiosResponse<Merriam.Entry[]>).data;
 
-    const translations: string[] = [];
-    const transcriptions: string[] = [];
+    const shards: string[] = [];
 
     for (const entry of result) {
-      translations.push(entry.hwi.hw);
-      if (entry.fl) { translations.push(entry.fl); }
+      shards.push(entry.hwi.hw);
+      if (entry.fl) { shards.push(entry.fl); }
 
       for (const prs of entry.hwi.prs || []) {
         if (prs.mw) {
-          translations.push(`[${prs.mw}]`);
+          shards.push(`[${prs.mw}]`);
         }
       }
 
@@ -54,7 +53,7 @@ class _DictionaryapiDotCom {
               const variant = formatString(sense.dt[0][1]);
 
               if (!IsEmptyOrWhitespaces(variant)) {
-                translations.push(variant);
+                shards.push(variant);
               }
             }
           }
@@ -62,11 +61,8 @@ class _DictionaryapiDotCom {
       }
     }
 
-    return {
-      Translations: translations,
-      Transcriptions: transcriptions
-    }
+    return shards;
   }
 }
 
-export const DictionaryapiDotCom = new _DictionaryapiDotCom();
+export const MerriamWebster = new _MerriamWebster();

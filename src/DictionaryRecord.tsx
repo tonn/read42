@@ -3,22 +3,20 @@ import './DictionaryRecord.scss';
 import { JsonEditor } from './Helpers';
 import { Map } from './Helpers/Map';
 import { Modal } from './Helpers/Modal';
-import { DictionaryapiDotCom } from './Integrations/DictionaryapiDotCom';
+import { MerriamWebster } from './Integrations';
 import { IDictionaryRecord } from './State';
 
 export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Record }) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const [translations] = useState<string[]>([]);
-  const [transcriptions] = useState<string[]>([]);
+  const [ integrationShards ] = useState<string[]>([]);
 
   useEffect(() => {
-    DictionaryapiDotCom.GetWordInfo(Record.BaseWord).then(info => {
-      translations.push(...info.Translations);
-      transcriptions.push(...info.Transcriptions);
+    MerriamWebster.GetWordInfo(Record.BaseWord).then(shards => {
+      integrationShards.push(...shards);
 
       forceUpdate();
     });
-  }, [Record.BaseWord]);
+  }, []);
 
   function updateTranscription(transcription: string) {
     Record.Transcription = transcription;
@@ -35,7 +33,7 @@ export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Reco
   return <div>
     <JsonEditor json={Record} />
 
-    <Map items={translations} render={item =>
+    <Map items={integrationShards} render={item =>
       <div>
         <button title='Use as transcription' onClick={() => updateTranscription(item)}>1</button>
         <button title='Add translation' onClick={() => addTranslation(item)}>2</button>
