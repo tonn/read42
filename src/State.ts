@@ -16,16 +16,16 @@ export interface IDictionaryRecord {
   BaseWord: string,
   Transcription?: string,
   Translations?: string[],
-  Forms?: string[],
-  Synonyms?: string[],
-  Antonyms?: string[],
-  Examples?: string[],
-  PronounceAudioUrls?: string[],
-  ExerciseHistory?: {
-    ExerciseType: string,
-    Date: Date,
-    Success: number
-  }[]
+  // Forms?: string[],
+  // Synonyms?: string[],
+  // Antonyms?: string[],
+  // Examples?: string[],
+  // PronounceAudioUrls?: string[],
+  // ExerciseHistory?: {
+  //   ExerciseType: string,
+  //   Date: Date,
+  //   Success: number
+  // }[]
 }
 
 export interface IAppSharedState {

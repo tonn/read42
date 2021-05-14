@@ -103,6 +103,16 @@ export const DictionaryPage: React.FC<{}> = (props) => {
     forceUpdate();
   }
 
+  async function showEditModal(record: IDictionaryRecord) {
+    await recordEditModalRef.current?.Show$(record);
+
+    const sharedState = Store.Get().SharedState;
+
+    const newDict = [...sharedState.Dictionary]
+
+    Store.Set({ SharedState: { ...sharedState, ...{ Dictionary: newDict } } });
+  }
+
   return (
     <div className={block()}>
       <textarea ref={inputRef} className={elem('Input')} onKeyPress={onInputKeyPress} />
@@ -116,7 +126,7 @@ export const DictionaryPage: React.FC<{}> = (props) => {
         Render: () =>
           <div className={elem('Records')}>
             <Map items={dict} render={(recordvm, index) =>
-              <div key={recordvm.Record.BaseWord} className={elem('Record')} onClick={() => recordEditModalRef.current?.Show$(recordvm.Record)}>
+              <div key={recordvm.Record.BaseWord} className={elem('Record')} onClick={() => showEditModal(recordvm.Record)}>
                 <input type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} />
                 <span>
                   {index+1}.<Nbsp />{recordvm.Record.BaseWord}

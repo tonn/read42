@@ -134,11 +134,11 @@ class _Store {
         result.Dictionary.push(rdr);
       } else {
         // TODO merge exercises
-        localDictRecord.Antonyms = _.uniq([...localDictRecord.Antonyms || [], ...rdr.Antonyms || []]);
-        localDictRecord.Examples = _.uniq([...localDictRecord.Examples || [], ...rdr.Examples || []]);
-        localDictRecord.Forms = _.uniq([...localDictRecord.Forms || [], ...rdr.Forms || []]);
-        localDictRecord.PronounceAudioUrls = _.uniq([...localDictRecord.PronounceAudioUrls || [], ...rdr.PronounceAudioUrls || []]);
-        localDictRecord.Synonyms = _.uniq([...localDictRecord.Synonyms || [], ...rdr.Synonyms || []]);
+        // localDictRecord.Antonyms = _.uniq([...localDictRecord.Antonyms || [], ...rdr.Antonyms || []]);
+        // localDictRecord.Examples = _.uniq([...localDictRecord.Examples || [], ...rdr.Examples || []]);
+        // localDictRecord.Forms = _.uniq([...localDictRecord.Forms || [], ...rdr.Forms || []]);
+        // localDictRecord.PronounceAudioUrls = _.uniq([...localDictRecord.PronounceAudioUrls || [], ...rdr.PronounceAudioUrls || []]);
+        // localDictRecord.Synonyms = _.uniq([...localDictRecord.Synonyms || [], ...rdr.Synonyms || []]);
       }
     });
 

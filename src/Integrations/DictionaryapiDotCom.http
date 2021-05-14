@@ -1,0 +1,16 @@
+
+@apiKey1 = key=8455853d-046c-4aaf-8ae6-ecd78b7deb66
+@apiKey2 = key=5ee7a311-4a59-48b2-824a-b020fddbb46e
+
+@server = https://www.dictionaryapi.com/api/v3
+
+@testWord = hello
+@srcLang = 1033
+@dstLang = 1049
+
+###
+GET {{server}}/references/sd2/json/{{testWord}}?{{apiKey2}}
+
+
+###
+GET {{server}}/references/sd3/json/{{testWord}}?{{apiKey1}}
