@@ -67,10 +67,14 @@ class _Store {
     this.saveLocalState();
   }
 
-  async CORSProxy(url: string) {
-    const throughCORSUrl = `${Server}/proxy?url=${encodeURIComponent(url)}`;
+  async CORSProxy(url: string, headers?: any, method?: 'POST' | 'GET') {
+    let throughCORSUrl = `${Server}/proxy?url=${encodeURIComponent(url)}`;
 
-    return await Axios.get(throughCORSUrl, { headers: this._authHeaders });
+    if (method) {
+      throughCORSUrl += `&method=${method}`;
+    }
+
+    return await Axios.get(throughCORSUrl, { headers: { ...this._authHeaders, ...headers } });
   }
 
   Logout() {

@@ -2,6 +2,7 @@ import Axios, { AxiosResponse } from 'axios';
 import Merriam from 'mw-collegiate';
 import _ from 'lodash';
 import { IsEmptyOrWhitespaces } from '../Helpers/String.extension';
+import { IDictionaryIntegration } from './DictionaryIntegration';
 
 const ApiKeys = {
   Intermediate: '8455853d-046c-4aaf-8ae6-ecd78b7deb66', // Intermediate Dictionary
@@ -21,23 +22,23 @@ function formatString(dt: string): string {
 }
 
 function normalizeWord(word: string): string {
-  const result = /(a *|to *)(.*)/.exec(word);
+  const result = /(a +|to +)(.*)/.exec(word);
 
   return result ? result[2] : word;
 }
 
-class _MerriamWebster {
-  async GetWordInfo(word: string) {
+class _MerriamWebster implements IDictionaryIntegration {
+  async GetWordInfo(word: string): Promise<string[]> {
     word = normalizeWord(word);
 
     const result = (await Axios({
       url: `https://www.dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${ApiKeys.Intermediate}`
     }) as AxiosResponse<Merriam.Entry[]>).data;
 
-    const shards: string[] = [];
+    const shards: string[] = [ '<b>Merriam-Webster</b>' ];
 
     for (const entry of result) {
-      shards.push(entry.hwi.hw);
+      shards.push(`<b>${entry.hwi.hw}</b>`);
       if (entry.fl) { shards.push(entry.fl); }
 
       for (const prs of entry.hwi.prs || []) {

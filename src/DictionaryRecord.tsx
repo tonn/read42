@@ -1,9 +1,10 @@
 import React, { createRef, useEffect, useReducer, useState } from 'react';
 import './DictionaryRecord.scss';
 import { JsonEditor } from './Helpers';
+import { If } from './Helpers/If';
 import { Map } from './Helpers/Map';
 import { Modal } from './Helpers/Modal';
-import { MerriamWebster } from './Integrations';
+import { LingvoOnline, MerriamWebster } from './Integrations';
 import { IDictionaryRecord } from './State';
 
 export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Record }) => {
@@ -11,8 +12,9 @@ export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Reco
   const [ integrationShards ] = useState<string[]>([]);
 
   useEffect(() => {
-    MerriamWebster.GetWordInfo(Record.BaseWord).then(shards => {
-      integrationShards.push(...shards);
+    Promise.all([LingvoOnline.GetWordInfo(Record.BaseWord), MerriamWebster.GetWordInfo(Record.BaseWord)])
+    .then(([lingvo, merriam]) => {
+      integrationShards.push(...lingvo, ...merriam);
 
       forceUpdate();
     });
@@ -37,7 +39,12 @@ export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Reco
       <div>
         <button title='Use as transcription' onClick={() => updateTranscription(item)}>1</button>
         <button title='Add translation' onClick={() => addTranslation(item)}>2</button>
-        {item}
+        <If condition={item.startsWith('<b>')}>
+          <span dangerouslySetInnerHTML={{ __html: item }}/>
+        </If>
+        <If condition={!item.startsWith('<b>')}>
+          {item}
+        </If>
       </div>
     } />
   </div>;

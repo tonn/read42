@@ -1,0 +1,20 @@
+
+@apiKey = NmE3YTZmNTYtODk0Yy00NWFkLThjZjItNzJjMjU4NWJjYmZmOjMzNGM0MTZhZTFiNzRiMTA5YzQ4ZGNiNzg2N2Q2YWMy
+@server = https://developers.lingvolive.com
+
+###
+# @name token
+POST {{server}}/api/v1.1/authenticate
+Authorization: Basic {{apiKey}}
+
+###
+
+@auth = Authorization: Bearer {{token.response.body.*}}
+
+@testWord = hello
+@srcLang = 1033
+@dstLang = 1049
+
+###
+GET {{server}}/api/v1/Translation?text={{testWord}}&srcLang={{srcLang}}&dstLang={{dstLang}}&isCaseSensitive=false
+{{auth}}
