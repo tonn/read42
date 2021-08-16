@@ -33,7 +33,7 @@
     cursor: pointer;
 
     > *:not(:last-child) {
-      margin-right: $spacing / 2;
+      margin-right: $spacing * 0.5;
     }
 
     &:hover {

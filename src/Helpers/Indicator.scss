@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import '../shared.scss';
 @import '../zIndex.scss';
 
@@ -15,10 +17,10 @@
     @include size($containerSize);
     @include flex-center;
     background: #FFF8;
-    border-radius: $containerSize / 1.69;
+    border-radius: math.div($containerSize, 1.69);
 
     > img {
-      @include size($containerSize / 1.69);
+      @include size(math.div($containerSize, 1.69));
     }
   }
 }

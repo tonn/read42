@@ -1,12 +1,8 @@
-$z-index: (
-  sideMenu: 1,
-  indicator: 2
-);
+@use "sass:list";
 
-@function z-index($key) {
-  @return map-get($z-index, $key);
-}
+$z-index: sideMenu,
+          indicator;
 
 @mixin z-index($key) {
-  z-index: z-index($key);
+  z-index: list.index($z-index, $key);
 }
