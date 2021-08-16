@@ -1,0 +1,60 @@
+@import '../shared';
+
+.DictionaryPage {
+  $record_height: $spacing * 4;
+
+  @include full-size;
+  @include flex(column);
+  overflow: hidden;
+
+  > * {
+    flex: 0 0 auto;
+  }
+
+  &__Tabs {
+    flex: 1 1 auto;
+    margin-top: $spacing;
+    overflow: hidden;
+  }
+
+  &__Records {
+    @include full-size;
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+
+  &__Record {
+    @include size(100%, $record_height);
+    @include flex-vertical-center;
+    position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+
+    > *:not(:last-child) {
+      margin-right: $spacing / 2;
+    }
+
+    &:hover {
+      background-color: lightgray;
+    }
+
+    &:before {
+      @include absolute-lb;
+      @include size(calc(100% * var(--studyIndicator)), 4px);
+      content: '';
+      background-color: lightgreen;
+      z-index: -1;
+    }
+
+    &_NoTranslation {
+      background-color: lightcoral;
+    }
+  }
+
+  &__Selection {
+    @include size($record_height);
+    flex: 0 0 auto;
+  }
+}

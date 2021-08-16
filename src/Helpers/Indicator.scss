@@ -1,9 +1,12 @@
 @import '../shared.scss';
+@import '../zIndex.scss';
 
 .Indicator {
   @include absolute-lt;
   @include full-size;
   @include flex-center;
+  @include z-index(indicator);
+
   background: #5555;
 
   $containerSize: 20vw;

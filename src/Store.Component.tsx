@@ -1,50 +1,47 @@
 import React, { useReducer, useRef } from 'react';
 import nameof from 'ts-nameof.macro';
-import { BEM } from './Helpers';
-import { ISource } from './State';
-import { Store } from './Store';
+import { BEM, GetIndicator } from './Helpers';
+import { ISource } from "./Store/ISource";
+import { Api, Store, Sync } from './Store';
 import './Store.Component.scss';
+import { useStore } from './Helpers/Store/Store42/useStore';
 
 export const StoreComponent: React.FC<{ OnSourceClick: (source: ISource) => void }> = (props) => {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ login ] = useStore(Store, s => s.Login);
+  const [ shared ] = useStore(Store, s => s.SharedState);
 
   const loginInput = useRef<HTMLInputElement>(null);
   const passwordInput = useRef<HTMLInputElement>(null);
 
   async function signin() {
     if (loginInput.current && passwordInput.current) {
-      try {
-        await Store.Signin(loginInput.current?.value, passwordInput.current?.value);
-      } finally {
-        forceUpdate();
-      }
+      await Api.Signin(loginInput.current?.value, passwordInput.current?.value);
     }
   }
 
   async function signup() {
-    if (loginInput.current && passwordInput.current) {
-      try {
-        await Store.Signup(loginInput.current?.value, passwordInput.current?.value);
-      } finally {
-        forceUpdate();
+    GetIndicator().Wrap$(async () => {
+      if (loginInput.current && passwordInput.current) {
+        await Api.Signup(loginInput.current?.value, passwordInput.current?.value);
       }
-    }
+    });
   }
 
   function logout() {
-    try {
-      Store.Logout();
-    } finally {
-      forceUpdate();
-    }
+    Api.Logout();
   }
 
   async function restore() {
-    await Store.RestoreShareState();
-    forceUpdate();
+    GetIndicator().Wrap$(async () => {
+      await Sync.RestoreSharedState();
+    });
   }
 
-  const { Login: login, SharedState: shared } = Store.Get();
+  async function save() {
+    GetIndicator().Wrap$(async () => {
+      await Sync.SaveSharedState();
+    });
+  }
 
   return (
     <div className={block()}> {
@@ -56,7 +53,7 @@ export const StoreComponent: React.FC<{ OnSourceClick: (source: ISource) => void
         <span>User: <b>{login}</b> </span>
         <button onClick={logout}>Logout</button>
         <button onClick={restore}>Restore state</button>
-        <button onClick={() => Store.SaveSharedState()}>Save state</button>
+        <button onClick={save}>Save state</button>
         <br />
         <br />
         <div>

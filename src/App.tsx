@@ -3,17 +3,18 @@ import { Readability } from '@mozilla/readability';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import nameof from 'ts-nameof.macro';
 import './App.scss';
-import { AppearanceConfig, DefaultAppearance, IAppearance } from './Appearance';
+import { AppearanceConfig, DefaultAppearance, IAppearance } from './Store/Appearance';
 import { AppLayout, AppLayoutRef, ToolBarButton } from './AppLayout';
-import { DictionaryPage } from './DictionaryPage';
+import { DictionaryPage } from './Vocabular/DictionaryPage';
 import { BEM, DebounceFn, GetIndicator, Indicator, timeout$ } from './Helpers';
 import { RichText } from './RichText';
 import * as serviceWorker from './serviceWorkerRegistration';
 import { PWAUpdateAvailable } from './serviceWorkerRegistration';
-import { Store } from './Store';
+import { Api, Store } from './Store';
 import { StoreComponent } from './Store.Component';
+import { LearningPage } from './Learning/LearningPage';
 
-type PageType = 'read' | 'dict';
+type PageType = 'read' | 'dict' | 'learning';
 
 export const App: React.FC = () => {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -64,7 +65,7 @@ export const App: React.FC = () => {
         lastSource.Position = sharedSource.Position;
         lastSource.Date = sharedSource.Date;
       } else {
-        const html = (await Store.CORSProxy(url)).data as string;
+        const html = (await Api.CORSProxy(url)).data as string;
 
         lastSource = { ...sharedSource, Raw: html };
       }
@@ -150,6 +151,7 @@ export const App: React.FC = () => {
         const renderer = { render: () => <>
           <div className={elem('MenuNavigationItem', appPage === 'read' ? 'Active' : undefined)} onClick={() => openPage('read')}>Reading</div>
           <div className={elem('MenuNavigationItem', appPage === 'dict' ? 'Active' : undefined)} onClick={() => openPage('dict')}>Dictionary</div>
+          <div className={elem('MenuNavigationItem', appPage === 'learning' ? 'Active' : undefined)} onClick={() => openPage('learning')}>Learning</div>
 
           <div className={elem('MenuGroup')}>
             <input ref={urlInput} defaultValue='http://www.hpmor.com/chapter/1' /><button onClick={onReadButtonClick}>Read</button>
@@ -189,7 +191,8 @@ export const App: React.FC = () => {
       <AppLayout ToolBarButtons={getToolbarButtons()} SidePanelChildren={sidePanelContent?.render()} ref={appLayout}>
         <div className={elem('Scroll')} onScroll={onTextScroll.current} ref={scrollElement}>
           { (appPage === 'read' && article) ? <RichText Text={article} Appearance={appearance} /> :
-            appPage === 'dict' ? <DictionaryPage /> : null }
+            appPage === 'dict' ? <DictionaryPage /> :
+            appPage === 'learning' ? <LearningPage /> : null }
         </div>
       </AppLayout>
     </div>

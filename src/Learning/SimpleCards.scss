@@ -1,0 +1,9 @@
+@import '../shared';
+
+.SimpleCards {
+  @include flex(column);
+
+  &__Word {
+    text-align: center;
+  }
+}

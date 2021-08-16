@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
+import ReactModal from 'react-modal';
 import { App } from './App';
+import './index.scss';
 import * as serviceWorker from './serviceWorkerRegistration';
+import './Store';
 
 ReactDOM.render(<React.StrictMode><App /></React.StrictMode>,
   document.getElementById('root')
 );
+
+ReactModal.setAppElement(document.getElementById('root')!);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

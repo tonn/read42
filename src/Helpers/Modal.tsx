@@ -5,13 +5,13 @@ type ModalResult = 'ok' | 'cancel';
 type ResultCallback = (result: ModalResult) => void;
 
 interface IModalProps {
-  render: (closeCallback: ResultCallback) => React.ReactNode
+  render: (closeCallback: ResultCallback) => React.ReactNode,
+  className?: string
 }
 
 interface IModalState {
   closeCallback?: ResultCallback;
 }
-
 
 export class Modal extends React.Component<IModalProps, IModalState, {}> {
   constructor(props: IModalProps) {
@@ -38,6 +38,6 @@ export class Modal extends React.Component<IModalProps, IModalState, {}> {
     const { closeCallback } = this.state;
     const { render } = this.props;
 
-    return <ReactModal isOpen={!!closeCallback}>{closeCallback ? render(closeCallback) : null}</ReactModal>
+    return <ReactModal isOpen={!!closeCallback} style={{ content: { overflow: 'hidden' } }}>{closeCallback ? render(closeCallback) : null}</ReactModal>
   }
 }

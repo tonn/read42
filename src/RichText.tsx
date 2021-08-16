@@ -1,6 +1,6 @@
 import React from 'react';
 import nameof from 'ts-nameof.macro';
-import { IAppearance } from './Appearance';
+import { IAppearance } from './Store/Appearance';
 import { BEM } from './Helpers';
 
 export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (props) => {

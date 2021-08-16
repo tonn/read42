@@ -1,0 +1,8 @@
+@import '../shared';
+
+.ModalWithCloseButton {
+  &__CloseIcon {
+    @include absolute-rt($spacing);
+    cursor: pointer;
+  }
+}

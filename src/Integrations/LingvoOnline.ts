@@ -4,7 +4,7 @@ import { IDictionaryIntegration } from "./DictionaryIntegration";
 import { once } from "lodash-decorators/once";
 import { treeSearch } from "../Helpers";
 import { IsEmptyOrWhitespaces } from "../Helpers/String.extension";
-import { Store } from "../Store";
+import { Api, Store } from "../Store";
 
 const apiKey = 'NmE3YTZmNTYtODk0Yy00NWFkLThjZjItNzJjMjU4NWJjYmZmOjMzNGM0MTZhZTFiNzRiMTA5YzQ4ZGNiNzg2N2Q2YWMy';
 const srcLang = 1033; // en
@@ -35,7 +35,7 @@ class _LingvoOnline implements IDictionaryIntegration {
   async Authorize(): Promise<string> {
     const url = 'https://developers.lingvolive.com/api/v1.1/authenticate';
 
-    return (await Store.CORSProxy(url, { Proxy_Authorization: `basic ${apiKey}` }, 'POST')).data;
+    return (await Api.CORSProxy(url, { Proxy_Authorization: `basic ${apiKey}` }, 'POST')).data;
   }
 
   async GetWordInfo(word: string): Promise<string[]> {
@@ -45,7 +45,7 @@ class _LingvoOnline implements IDictionaryIntegration {
 
     const url = `https://developers.lingvolive.com/api/v1/Translation?text=${word}&srcLang=${srcLang}&dstLang=${dstLang}&isCaseSensitive=false`;
 
-    const response = (await Store.CORSProxy(url, { Proxy_Authorization: `bearer ${token}` })).data as ArticleModel[];
+    const response = (await Api.CORSProxy(url, { Proxy_Authorization: `bearer ${token}` })).data as ArticleModel[];
 
     const shards: string[] = [ '<b>Lingvo Online</b>' ];
 

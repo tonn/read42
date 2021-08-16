@@ -1,0 +1,15 @@
+@import '../shared.scss';
+
+.DictionaryRecord {
+  @include full-size;
+  overflow-y: auto;
+}
+
+.DictionaryRecordModal {
+  @include full-size;
+
+  &__CloseIcon {
+    @include absolute-rt($spacing);
+    cursor: pointer;
+  }
+}

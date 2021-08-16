@@ -1,0 +1,33 @@
+@import '../shared';
+
+.ChooseTranslation {
+  @include flex(column);
+
+  &__Word {
+    font-size: 5vmin;
+    text-align: center;
+    margin-bottom: 2vh;
+  }
+
+  &__Buttons {
+    @include flex(column);
+  }
+
+  &__OptionButton {
+    min-height: 10vmin;
+    font-size: 5vmin;
+    text-align: left;
+
+    &_Right {
+      background-color: lightgreen;
+    }
+
+    &_Wrong {
+      background-color: lightcoral;
+    }
+
+    &_Chosen {
+      font-weight: bold;
+    }
+  }
+}
