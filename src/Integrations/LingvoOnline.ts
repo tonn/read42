@@ -24,10 +24,10 @@ interface ArticleModel {
   Body: ArticleNode;
 }
 
-function normalizeWord(word: string): string {
-  const result = /(a +|to +)(.*)/.exec(word);
+export function normalizeWord(word: string): string {
+  const result = /^\s*(a +|to +|an +|the +)(.*)/.exec(word);
 
-  return result ? result[2] : word;
+  return (result ? result[2] : word).trim();
 }
 
 class _LingvoOnline implements IDictionaryIntegration {

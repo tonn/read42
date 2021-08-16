@@ -3,6 +3,7 @@ import Merriam from 'mw-collegiate';
 import _ from 'lodash';
 import { IsEmptyOrWhitespaces } from '../Helpers/String.extension';
 import { IDictionaryIntegration } from './DictionaryIntegration';
+import { normalizeWord } from './LingvoOnline';
 
 const ApiKeys = {
   Intermediate: '8455853d-046c-4aaf-8ae6-ecd78b7deb66', // Intermediate Dictionary
@@ -19,12 +20,6 @@ function isSenseObject(o: 'sense' | Merriam.SenseObject): o is Merriam.SenseObje
 
 function formatString(dt: string): string {
   return dt.replaceAll(/{.*}/g, '');
-}
-
-function normalizeWord(word: string): string {
-  const result = /(a +|to +)(.*)/.exec(word);
-
-  return result ? result[2] : word;
 }
 
 class _MerriamWebster implements IDictionaryIntegration {
