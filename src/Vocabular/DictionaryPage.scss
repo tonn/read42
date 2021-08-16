@@ -11,12 +11,6 @@
     flex: 0 0 auto;
   }
 
-  &__Tabs {
-    flex: 1 1 auto;
-    margin-top: $spacing;
-    overflow: hidden;
-  }
-
   &__Records {
     @include full-size;
     flex: 1 1 auto;

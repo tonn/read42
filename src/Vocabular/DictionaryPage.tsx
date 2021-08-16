@@ -1,13 +1,14 @@
 import { faCheck, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as FAIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useReducer, useRef } from 'react';
+import { Button } from 'react-bootstrap';
 import nameof from 'ts-nameof.macro';
-import { BEM, JsonEditor, Nbsp } from '../Helpers';
+import { BEM, Nbsp } from '../Helpers';
 import { If } from '../Helpers/If';
-import { Map } from '../Helpers/Map';
+import { useWindowSize } from '../Helpers/React/useWindowSize';
+import { VirtualScroll } from '../Helpers/React/VirtualScroll';
 import { useStore } from '../Helpers/Store/Store42/useStore';
-import { Tabs } from '../Helpers/Tabs';
 import { Store } from '../Store';
 import { IDictionaryRecord } from '../Store/IDictionaryRecord';
 import './DictionaryPage.scss';
@@ -34,6 +35,7 @@ export const DictionaryPage: React.FC<{}> = (props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recordEditModalRef = useRef<DictionaryRecordModal>(null);
   const tagsSelectorRef = useRef<TagsSelectorRef>(null);
+  const windowSize = useWindowSize();
 
   function onInputKeyPress(e: React.KeyboardEvent) {
     if (e.key === 'Enter' && e.shiftKey && inputRef.current) {
@@ -149,49 +151,32 @@ export const DictionaryPage: React.FC<{}> = (props) => {
     e.stopPropagation();
   }
 
+  function getItemSize() {
+    return (windowSize?.width || 100) * 0.1;
+  }
+
   return (
     <div className={block()}>
       <textarea ref={inputRef} className={elem('Input')} onKeyPress={onInputKeyPress} />
       <div>
-        <button onClick={onAddRecordsButtonPress}><FAIcon icon={faPlus}/> Add records</button>
-        <button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</button>
-        <button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</button>
-        <button onClick={editTags$}>Edit tags</button>
+        <Button onClick={onAddRecordsButtonPress}><FAIcon icon={faPlus}/> Add records</Button>
+        <Button onClick={removeSelected}><FAIcon icon={faTrash}/> Remove selected</Button>
+        <Button onClick={toggleSelectionAll}><FAIcon icon={faCheck}/> (Un)Select all</Button>
+        <Button onClick={editTags$}>Edit tags</Button>
       </div>
-      <Tabs className={elem('Tabs')} Tabs={[{
-        Title: 'List',
-        Render: () =>
-          <div className={elem('Records')}>
-            <Map items={dict} render={(recordvm, index) =>
-              <div className={elem('Record', !recordvm.Record.Translations?.length && 'NoTranslation')} key={recordvm.Record.BaseWord + index}
-                onClick={() => showEditModal(recordvm.Record)}
-                style={{ '--studyIndicator': recordvm.StudyIndicator } as any}>
-                <input className={elem('Selection')} type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} onClick={stopPropagation} />
-                <span>
-                  {index+1}.<Nbsp />{recordvm.Record.BaseWord} <span><If condition={!!recordvm.Record.Transcription}>[{recordvm.Record.Transcription}]</If> {recordvm.Record.Translations![0] || ''}</span>
-                </span>
-              </div>
-            } />
+
+      <div className={elem('Records')}>
+        <VirtualScroll items={dict} renderItem={(recordvm, index) => (
+          <div className={elem('Record', !recordvm.Record.Translations?.length && 'NoTranslation')} key={recordvm.Record.BaseWord + index}
+            onClick={() => showEditModal(recordvm.Record)}
+            style={{ '--studyIndicator': recordvm.StudyIndicator } as any}>
+            <input className={elem('Selection')} type='checkbox' checked={recordvm.IsSeleted} onChange={() => toggleRecordSelection(recordvm)} onClick={stopPropagation} />
+            <span>
+              {index + 1}.<Nbsp />{recordvm.Record.BaseWord} <span><If condition={!!recordvm.Record.Transcription}>[{recordvm.Record.Transcription}]</If> {recordvm.Record.Translations![0] || ''}</span>
+            </span>
           </div>
-      }, {
-        Title: 'Json',
-        Render: () =>
-          <JsonEditor className={elem('Records')} json={dict.map(d => d.Record)} options={{
-            mode: 'tree',
-            schema: {
-              elements: {
-                properties: {
-                  BaseWord: { type: 'string' },
-                  Transcription: { type: 'string'},
-                  Translations: { elements: { type: 'string' } }
-                }
-              }
-            }
-          }} />
-      }, {
-        Title: 'Text',
-        Render: () => <textarea />
-      }]}/>
+        )} />
+      </div>
 
       <DictionaryRecordModal ref={recordEditModalRef} />
       <TagsSelector ref={tagsSelectorRef} />
