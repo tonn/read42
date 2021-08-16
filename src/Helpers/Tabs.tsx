@@ -17,8 +17,8 @@ export const Tabs: React.FC<{ Tabs: Tab[], className?: string }> = ({ Tabs, clas
       <div className={elem('Buttons')}>
         <div className={elem('Spacer', 'Left')} />
 
-        <Map items={Tabs} render={tab =>
-          <button className={elem('Tab', currentTab === tab && 'Selected')} onClick={() => setCurrentTab(tab)}>{tab.Title}</button>
+        <Map items={Tabs} render={(tab, index) =>
+          <button key={index} className={elem('Tab', currentTab === tab && 'Selected')} onClick={() => setCurrentTab(tab)}>{tab.Title}</button>
         } />
 
         <div className={elem('Spacer')} />
