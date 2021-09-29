@@ -1,17 +1,14 @@
-import React, { createRef, useState } from 'react';
-import { If } from '../Helpers/If';
-import { Map } from '../Helpers/Map';
-import { Modal } from '../Helpers/Modal';
-import { IDictionaryRecord } from "../Store/IDictionaryRecord";
-import { Store } from '../Store';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { BEM, Nbsp } from '../Helpers';
-import nameof from 'ts-nameof.macro';
-import './ChooseTranslation.scss';
 import _ from 'lodash';
-import { LearningService } from './LearningService';
+import React, { useState } from 'react';
+import nameof from 'ts-nameof.macro';
+import { BEM, Nbsp } from '../Helpers';
+import { IfDiv } from '../Helpers/If';
+import { Map } from '../Helpers/Map';
+import { Store } from '../Store';
+import { IDictionaryRecord } from "../Store/IDictionaryRecord";
 import { DictionaryRecordEditButton } from '../Vocabular';
+import './ChooseTranslation.scss';
+import { LearningService } from './LearningService';
 
 interface ChooseOption { text: string, right?: boolean, chosen?: boolean }
 
@@ -19,6 +16,7 @@ export const ChooseTranslation: React.FC = () => {
   const [ record, setRecord ] = useState<IDictionaryRecord>();
   const [ options, setOptions ] = useState<ChooseOption[]>([]);
   const [ right, setRight ] = useState<'unknown' | 'yes' | 'no'>('unknown');
+  const [ optionButtonsDisabled, setOptionButtonsDisabled ] = useState(false);
 
   function nextWord() {
     let dict = Store.Get().SharedState.Dictionary.filter(r => r.Translations?.some(() => true));
@@ -32,6 +30,8 @@ export const ChooseTranslation: React.FC = () => {
     setRecord(record);
     setOptions([..._.shuffle(options), { text: `Don't know` }]);
     setRight('unknown');
+
+    setTimeout(() => setOptionButtonsDisabled(false), 1000); // prevent accidental tap after word switch
   }
 
   if (!record) {
@@ -41,6 +41,7 @@ export const ChooseTranslation: React.FC = () => {
   function choose(option: ChooseOption) {
     option.chosen = true;
     setRight(option.right ? 'yes' : 'no');
+    setOptionButtonsDisabled(true);
 
     if (record) {
       LearningService.UpdateRecord(record, option.right ? 'right' : 'wrong')
@@ -55,18 +56,18 @@ export const ChooseTranslation: React.FC = () => {
         <button className={elem('OptionButton', right !== 'unknown' && option.right && 'Right',
                                                 right !== 'unknown' && !option.right && option.chosen && 'Wrong',
                                                 option.chosen && 'Chosen')}
-                disabled={right !== 'unknown'}
+                disabled={optionButtonsDisabled}
                 onClick={() => choose(option)}>
           {index + 1}.<Nbsp />{option.text}
         </button>
       )}/>
 
-      <If condition={right !== 'unknown'}>
-        <button className={elem('OptionButton')} onClick={nextWord}>Next</button>
-      </If>
+      <IfDiv className={elem('NextWordOverlay')} condition={right !== 'unknown'} onClick={nextWord}>
+        <div className={elem('NextWordOverlayTitle')}>Press to go next word</div>
+      </IfDiv>
     </div>
 
-    {record ? <DictionaryRecordEditButton Record={record} /> : null}
+    {record ? <DictionaryRecordEditButton className={elem('EditButton')} Record={record} /> : null}
   </div>;
 }
 

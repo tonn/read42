@@ -6,7 +6,7 @@ import { BEM } from './BEM';
 import { Modal } from './Modal';
 import './ModalWithCloseButton.scss';
 
-export class ModalWithCloseButton extends React.Component<{}, {}, {}> {
+export class ModalWithCloseButton extends React.Component<{ ContentFullSize?: boolean }, {}, {}> {
   private modalRef = createRef<Modal>();
 
   Show$() {
@@ -16,7 +16,7 @@ export class ModalWithCloseButton extends React.Component<{}, {}, {}> {
   render() {
     return (
       <Modal className={block()} ref={this.modalRef} render={close =>
-        <div className={elem('Content')}>
+        <div className={elem('Content', this.props.ContentFullSize && 'FullSize')}>
           {this.props.children}
           <FontAwesomeIcon className={elem('CloseIcon')} icon={faTimes} onClick={() => close('ok')} />
         </div>

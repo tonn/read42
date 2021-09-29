@@ -13,8 +13,8 @@ export const LearningPage: React.FC = () => {
     <button className={elem('Button', 'SimpleCards')} onClick={() => simpleCards.current?.Show$()}>Simple cards</button>
     <button className={elem('Button', 'SimpleCards')} onClick={() => chooseTranslation.current?.Show$()}>Choose translation</button>
 
-    <ModalWithCloseButton ref={simpleCards}><SimpleCards /></ModalWithCloseButton>
-    <ModalWithCloseButton ref={chooseTranslation}><ChooseTranslation /></ModalWithCloseButton>
+    <ModalWithCloseButton ref={simpleCards} ContentFullSize><SimpleCards /></ModalWithCloseButton>
+    <ModalWithCloseButton ref={chooseTranslation} ContentFullSize><ChooseTranslation /></ModalWithCloseButton>
   </div>;
 }
 

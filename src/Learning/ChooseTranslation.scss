@@ -2,6 +2,7 @@
 
 .ChooseTranslation {
   @include flex(column);
+  @include full-size;
 
   &__Word {
     font-size: 5vmin;
@@ -11,12 +12,16 @@
 
   &__Buttons {
     @include flex(column);
+    justify-content: space-between;
+    flex: 1 1 auto;
   }
 
   &__OptionButton {
     min-height: 10vmin;
     font-size: 5vmin;
     text-align: left;
+    border: none;
+    padding: $spacing * 2;
 
     &_Right {
       background-color: lightgreen;
@@ -29,5 +34,23 @@
     &_Chosen {
       font-weight: bold;
     }
+  }
+
+  &__NextWordOverlay {
+    @include full-size;
+    @include flex-center;
+    @include absolute-lt;
+    background-color: #5552;
+  }
+
+  &__NextWordOverlayTitle {
+    background-color: white;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+    border-radius: $spacing;
+    padding: $spacing * 2;
+  }
+
+  &__EditButton {
+    @include absolute-lt;
   }
 }

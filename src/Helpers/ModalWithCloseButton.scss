@@ -5,4 +5,10 @@
     @include absolute-rt($spacing);
     cursor: pointer;
   }
+
+  &__Content {
+    &_FullSize {
+      @include full-size;
+    }
+  }
 }
