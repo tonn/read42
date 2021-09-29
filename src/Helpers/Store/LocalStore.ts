@@ -55,4 +55,18 @@ export class LocalStore<T> {
 
     return result;
   }
+
+  // TODO:
+  // Use<TProp extends keyof IUserSettings>() {
+  //   return useObservableState(
+  //     () => UserSettingsService.Get$().pipe(map(s => s[TProp])), 'system',
+  //     value => {
+  //       const changes: Partial<IUserSettings> = {};
+  //       changes[TProp] = value;
+
+  //       UserSettingsService.Set(changes);
+  //     }
+  //   );
+  // }
+
 }
