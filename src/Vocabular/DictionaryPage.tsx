@@ -14,6 +14,7 @@ import { IDictionaryRecord } from '../Store/IDictionaryRecord';
 import './DictionaryPage.scss';
 import { DictionaryRecordModal } from './DictionaryRecord';
 import { TagsSelector, TagsSelectorRef } from './TagsSelector';
+import { Map } from '../Helpers/Map';
 
 interface IDictionaryRecordViewModel {
   Record: IDictionaryRecord;
@@ -174,6 +175,12 @@ export const DictionaryPage: React.FC<{}> = (props) => {
             <span>
               {index + 1}.<Nbsp />{recordvm.Record.BaseWord} <span><If condition={!!recordvm.Record.Transcription}>[{recordvm.Record.Transcription}]</If> {recordvm.Record.Translations![0] || ''}</span>
             </span>
+
+            <div className={elem('Tags')}>
+              <Map items={recordvm.Record.Tags} render={tag => (
+                <span>{tag}</span>
+              )} />
+            </div>
           </div>
         )} />
       </div>
