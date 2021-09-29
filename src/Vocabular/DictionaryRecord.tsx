@@ -43,8 +43,8 @@ export const DictionaryRecord: React.FC<{ Record: IDictionaryRecord }> = ({ Reco
   return <div className={block()}>
     <JsonEditor json={Record} onChange={updateRecord} />
 
-    <Map items={integrationShards} render={item =>
-      <div>
+    <Map items={integrationShards} render={(item, index) =>
+      <div key={item + index}>
         <button title='Use as transcription' onClick={() => updateTranscription(item)}>1</button>
         <button title='Add translation' onClick={() => addTranslation(item)}>2</button>
         <If condition={item.startsWith('<b>')}>
@@ -83,10 +83,10 @@ export class DictionaryRecordModal extends React.Component<{}, { record: IDictio
 
 const { block: blockModal, elem: elemModal } = BEM(nameof(DictionaryRecordModal));
 
-export const DictionaryRecordEditButton: React.FC<{ Record: IDictionaryRecord }> = ({ Record }) => {
+export const DictionaryRecordEditButton: React.FC<{ Record: IDictionaryRecord, className?: string }> = ({ Record, className }) => {
   const ref = useRef<DictionaryRecordModal>(null);
 
-  return <button onClick={async () => await ref.current?.Show$(Record)}>
+  return <button className={className} onClick={async () => await ref.current?.Show$(Record)}>
     Edit
     <DictionaryRecordModal ref={ref} />
   </button>;
