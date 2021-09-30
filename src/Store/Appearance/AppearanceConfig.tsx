@@ -27,5 +27,11 @@ export const AppearanceConfig: React.FC<{ Appearance: IAppearance, onChanged: ()
     <br/>
     Line height:
     <input type='number' value={Appearance.LineHeight} onChange={e => update({ LineHeight: parseFloat(e.target.value) })} />
+    <br/>
+    Margin Left:
+    <input type='number' value={Appearance.PaddingLeft} onChange={e => update({ PaddingLeft: parseFloat(e.target.value) })} />
+    <br/>
+    Margin Right:
+    <input type='number' value={Appearance.PaddingRight} onChange={e => update({ PaddingRight: parseFloat(e.target.value) })} />
   </>);
 }
