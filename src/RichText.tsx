@@ -15,6 +15,8 @@ export const RichText: React.FC<{ Text: string, Appearance: IAppearance }> = (pr
                 background: {Appearance.Background};
                 line-height: {Appearance.LineHeight};
                 padding: {Appearance.Padding.map(p => `${p}vw`).join(' ')};
+                padding-left: {Appearance.PaddingLeft}vw;
+                padding-right: {Appearance.PaddingRight}vw;
             {`}`}
         </style>
         <div className={block()} dangerouslySetInnerHTML={{ __html: props.Text }}></div>
